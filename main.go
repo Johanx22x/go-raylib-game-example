@@ -20,6 +20,9 @@ var (
     playerDest rl.Rectangle
 
     playerSpeed float32 = 3
+
+    musicPaused bool
+    music rl.Music
 )
 
 // This function draws a sprite to the screen 
@@ -46,6 +49,10 @@ func input() {
     if rl.IsKeyDown(rl.KeyD) || rl.IsKeyDown(rl.KeyRight) {
         playerDest.X += playerSpeed
     }
+
+    if rl.IsKeyPressed(rl.KeyQ) {
+        musicPaused = !musicPaused // Toggle musicPaused
+    }
 }
 
 // Update function is called every frame
@@ -53,6 +60,13 @@ func input() {
 // Also, it is used to check if the game should be closed
 func update() {
     running = !rl.WindowShouldClose()
+
+    rl.UpdateMusicStream(music)
+    if musicPaused {
+        rl.PauseMusicStream(music)
+    } else {
+        rl.ResumeMusicStream(music)
+    }
 }
 
 // This function is called every frame
@@ -79,6 +93,11 @@ func init() {
 
     playerSrc = rl.NewRectangle(0, 0, 48, 48)
     playerDest = rl.NewRectangle(200, 200, 100, 100)
+
+    rl.InitAudioDevice()
+    music = rl.LoadMusicStream("res/music.mp3")
+    musicPaused = false
+    rl.PlayMusicStream(music)
 }
 
 // This is the main function
@@ -103,5 +122,7 @@ func main() {
 func exit() {
     rl.UnloadTexture(grassSprite)
     rl.UnloadTexture(playerSprite)
+    rl.UnloadMusicStream(music)
+    rl.CloseAudioDevice()
     rl.CloseWindow()
 }
