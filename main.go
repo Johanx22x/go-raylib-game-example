@@ -23,6 +23,8 @@ var (
 
     musicPaused bool
     music rl.Music
+
+    camera rl.Camera2D
 )
 
 // This function draws a sprite to the screen 
@@ -67,6 +69,8 @@ func update() {
     } else {
         rl.ResumeMusicStream(music)
     }
+
+    camera.Target = rl.NewVector2(float32(playerDest.X-(playerDest.Width/2)), float32(playerDest.Y-(playerDest.Height/2)))
 }
 
 // This function is called every frame
@@ -76,8 +80,11 @@ func render() {
 
     rl.ClearBackground(bgColor)
 
+    rl.BeginMode2D(camera)
+
     drawScene()
 
+    rl.EndMode2D()
     rl.EndDrawing()
 }
 
@@ -98,6 +105,13 @@ func init() {
     music = rl.LoadMusicStream("res/music.mp3")
     musicPaused = false
     rl.PlayMusicStream(music)
+
+    camera = rl.NewCamera2D(
+        rl.NewVector2(float32(screenWidth/2), float32(screenHeight/2)),
+        rl.NewVector2(float32(playerDest.X-(playerDest.Width/2)), float32(playerDest.Y-(playerDest.Height/2))),
+        0.0, 
+        1.0,
+    )
 }
 
 // This is the main function
